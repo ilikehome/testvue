@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
-import Home from '../views/Home.vue'
 import User from '../views/User.vue'
 import Nav from '../views/Nav.vue'
 import Login from '../views/Login.vue' // 新增登录组件导入
+import Student from '../views/Student.vue'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -20,7 +20,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/count',
     name: 'Count',
-    component: Home,
+    component: Student,
     meta: { requiresAuth: true } // 学生信息页需要认证
   },
   {
