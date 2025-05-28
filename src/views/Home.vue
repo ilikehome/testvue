@@ -33,15 +33,22 @@
   // 动态获取API基地址（根据环境变量）
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
   
-  // 接口调用函数
+  // 接口调用函数（已添加 Token 头）
   const fetchStudentInfo = async () => {
     isLoading.value = true
     error.value = ''
     studentInfo.value = null
   
     try {
-      // 使用环境变量拼接完整API路径
-      const response = await fetch(`${apiBaseUrl}/info`)
+      // 从本地存储获取 Token
+      const token = localStorage.getItem('token')
+      // 使用环境变量拼接完整API路径，并添加 Token 头
+      const response = await fetch(`${apiBaseUrl}/info`, {
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : '' // 关键：添加 Token 头
+        }
+      })
       if (!response.ok) throw new Error(`HTTP错误：${response.status}`)
       const data = await response.json()
       // 校验数据格式

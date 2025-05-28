@@ -76,7 +76,13 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL
 // 获取用户列表
 const fetchUserList = async () => {
   try {
-    const response = await fetch(`${apiBaseUrl}/users`)
+    const token = localStorage.getItem('token') // 从本地存储获取 Token
+    const response = await fetch(`${apiBaseUrl}/users`, {
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : '' // 关键：添加 Token 到请求头
+      }
+    })
     const data = await response.json()
     userList.value = data
   } catch (err) {
@@ -92,19 +98,26 @@ const handleSave = async () => {
   }
 
   try {
+    const token = localStorage.getItem('token') // 获取 Token
     let response
     if (currentUser.value) {
-      // 更新用户
+      // 更新用户（新增 Token 头）
       response = await fetch(`${apiBaseUrl}/users/${currentUser.value.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : '' // 新增 Token 头
+        },
         body: JSON.stringify(formData.value)
       })
     } else {
-      // 添加用户
+      // 添加用户（新增 Token 头）
       response = await fetch(`${apiBaseUrl}/users`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': token ? `Bearer ${token}` : '' // 新增 Token 头
+        },
         body: JSON.stringify(formData.value)
       })
     }
@@ -117,12 +130,19 @@ const handleSave = async () => {
   }
 }
 
-// 删除用户
+// 删除用户（修改后）
 const deleteUser = async (userId: number) => {
   if (!confirm('确定要删除该用户吗？')) return
 
   try {
-    const response = await fetch(`${apiBaseUrl}/users/${userId}`, { method: 'DELETE' })
+    const token = localStorage.getItem('token') // 获取 Token
+    const response = await fetch(`${apiBaseUrl}/users/${userId}`, { 
+      method: 'DELETE',
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': token ? `Bearer ${token}` : '' // 新增 Token 头
+      }
+    })
     if (response.ok) {
       userList.value = userList.value.filter(user => user.id !== userId)
     }
